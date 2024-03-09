@@ -1,0 +1,158 @@
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendations</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Movie Recommender</h1>
+            <p>Select your preferred genres and discover new movies!</p>
+        </div>
+        <div class="preferences">
+            <h2>Select your preferred genres</h2>
+            <div class="checkbox-group">
+                <input type="checkbox" id="action" name="genre" value="action">
+                <label for="action">Action</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="comedy" name="genre" value="comedy">
+                <label for="comedy">Comedy</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="drama" name="genre" value="drama">
+                <label for="drama">Drama</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="scifi" name="genre" value="scifi">
+                <label for="scifi">Sci-Fi</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="thriller" name="genre" value="thriller">
+                <label for="thriller">Thriller</label>
+            </div>
+            <button onclick="getRecommendations()">Get Recommendations</button>
+        </div>
+        <div id="recommendations" class="hidden">
+            <h2>Recommended Movies</h2>
+            <div class="movie-list" id="movieList"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+css
+
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #141414;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #141414;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 500px;
+}
+
+.header {
+    text-align: center;
+    padding: 20px;
+    background-color: #000;
+    color: #fff;
+}
+
+.preferences {
+    padding: 20px;
+}
+
+h2 {
+    color: #fff;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+button {
+    background-color: #e50914;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #bf0711;
+}
+
+#recommendations {
+    padding: 20px;
+}
+
+.movie-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.movie-card {
+    background-color: #000;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    width: 200px;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+}
+
+.movie-details {
+    padding: 10px;
+    text-align: center;
+}
+
+.movie-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-bottom: 1px solid #fff;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Add some media queries for responsiveness */
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+    }
+}

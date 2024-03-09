@@ -1,157 +1,114 @@
-html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Recommendations</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Movie Recommender</h1>
-            <p>Select your preferred genres and discover new movies!</p>
-        </div>
-        <div class="preferences">
-            <h2>Select your preferred genres</h2>
-            <div class="checkbox-group">
-                <input type="checkbox" id="action" name="genre" value="action">
-                <label for="action">Action</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="comedy" name="genre" value="comedy">
-                <label for="comedy">Comedy</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="drama" name="genre" value="drama">
-                <label for="drama">Drama</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="scifi" name="genre" value="scifi">
-                <label for="scifi">Sci-Fi</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="thriller" name="genre" value="thriller">
-                <label for="thriller">Thriller</label>
-            </div>
-            <button onclick="getRecommendations()">Get Recommendations</button>
-        </div>
-        <div id="recommendations" class="hidden">
-            <h2>Recommended Movies</h2>
-            <div class="movie-list" id="movieList"></div>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+import random
 
-Css
+# Function to print the Tic-Tac-Toe board
+def print_board(board):
+    for row in board:
+        print("|".join(row))
+        print("-----")
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #141414;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
+# Function to check if a player has won
+def check_winner(board, player):
+    # Check rows
+    for row in board:
+        if all(cell == player for cell in row):
+            return True
+    # Check columns
+    for col in range(3):
+        if all(board[row][col] == player for row in range(3)):
+            return True
+    # Check diagonals
+    if all(board[i][i] == player for i in range(3)) or all(board[i][2 - i] == player for i in range(3)):
+        return True
+    return False
 
-.container {
-    background-color: #141414;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    width: 500px;
-}
+# Function to check if the board is full
+def is_board_full(board):
+    return all(cell != ' ' for row in board for cell in row)
 
-.header {
-    text-align: center;
-    padding: 20px;
-    background-color: #000;
-    color: #fff;
-}
+# Function to get the available moves
+def get_available_moves(board):
+    return [(i, j) for i in range(3) for j in range(3) if board[i][j] == ' ']
 
-.preferences {
-    padding: 20px;
-}
+# Function to make a move for the AI player using Minimax algorithm
+def minimax(board, depth, maximizing_player):
+    if check_winner(board, 'X'):
+        return -1
+    if check_winner(board, 'O'):
+        return 1
+    if is_board_full(board):
+        return 0
 
-h2 {
-    color: #fff;
-}
+    if maximizing_player:
+        max_eval = float('-inf')
+        for move in get_available_moves(board):
+            board[move[0]][move[1]] = 'O'
+            eval = minimax(board, depth + 1, False)
+            board[move[0]][move[1]] = ' '
+            max_eval = max(max_eval, eval)
+        return max_eval
+    else:
+        min_eval = float('inf')
+        for move in get_available_moves(board):
+            board[move[0]][move[1]] = 'X'
+            eval = minimax(board, depth + 1, True)
+            board[move[0]][move[1]] = ' '
+            min_eval = min(min_eval, eval)
+        return min_eval
 
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
+# Function to get the best move for the AI player
+def get_best_move(board):
+    best_move = None
+    best_eval = float('-inf')
+    for move in get_available_moves(board):
+        board[move[0]][move[1]] = 'O'
+        eval = minimax(board, 0, False)
+        board[move[0]][move[1]] = ' '
+        if eval > best_eval:
+            best_eval = eval
+            best_move = move
+    return best_move
 
-input[type="checkbox"] {
-    margin-right: 10px;
-}
+# Main function to play the Tic-Tac-Toe game
+def play_tic_tac_toe():
+    board = [[' ' for _ in range(3)] for _ in range(3)]
 
-button {
-    background-color: #e50914;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+    print("Welcome to Tic-Tac-Toe!")
+    print_board(board)
 
-button:hover {
-    background-color: #bf0711;
-}
+    while True:
+        # Player's move
+        row, col = map(int, input("Enter your move (row and column, separated by space): ").split())
+        if board[row][col] != ' ':
+            print("Invalid move. Try again.")
+            continue
+        board[row][col] = 'X'
+        print_board(board)
 
-#recommendations {
-    padding: 20px;
-}
+        # Check if the player has won
+        if check_winner(board, 'X'):
+            print("Congratulations! You win!")
+            break
 
-.movie-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-}
+        # Check if the board is full
+        if is_board_full(board):
+            print("It's a draw!")
+            break
 
-.movie-card {
-    background-color: #000;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    margin: 10px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    width: 200px;
-}
+        # AI's move
+        print("AI is making a move...")
+        ai_row, ai_col = get_best_move(board)
+        board[ai_row][ai_col] = 'O'
+        print_board(board)
 
-.movie-card:hover {
-    transform: scale(1.05);
-}
+        # Check if the AI has won
+        if check_winner(board, 'O'):
+            print("AI wins! Better luck next time.")
+            break
 
-.movie-details {
-    padding: 10px;
-    text-align: center;
-}
+        # Check if the board is full
+        if is_board_full(board):
+            print("It's a draw!")
+            break
 
-.movie-image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-bottom: 1px solid #fff;
-}
-
-.hidden {
-    display: none;
-}
-
-/* Add some media queries for responsiveness */
-@media (max-width: 600px) {
-    .container {
-        width: 90%;
-    }
-}
-
+if __name__ == "__main__":
+    play_tic_tac_toe()
